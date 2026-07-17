@@ -1,6 +1,3 @@
-/**
- * Author : Belal Khamees
- */
 
 import java.util.Scanner;
 
