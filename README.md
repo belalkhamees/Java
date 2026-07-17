@@ -1,2 +1,2 @@
 # Java
-This is repo for Java Tasks
+This repo for Java Projects and Assignments.
