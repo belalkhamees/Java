@@ -11,7 +11,7 @@ public class Main {
                 "4. Search Student by ID.\n" +
                 "5. Count Passed and Failed Students.\n" +
                 "6. Sort Students by Grade.\n" +
-                "7. Modify Student Grades\n" +
+                "7. Modify Student Grades.\n" +
                 "0. Exit.\n" +
                 "=======================");
     }
