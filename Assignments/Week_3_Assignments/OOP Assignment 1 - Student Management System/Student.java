@@ -6,7 +6,7 @@ public class Student {
     private String name;
     private double[] grades = new double[2];
 
-    //constructor
+    
     public Student(int id, String name, double[] grades) {
         this.id = id;
         this.name = name;
@@ -14,7 +14,6 @@ public class Student {
     }
 
 
-    //Setters
     public void setGrades(double[] grades) {
         if (grades.length == 2) {
             this.grades = grades;
@@ -22,7 +21,6 @@ public class Student {
     }
 
 
-    //getters
     public int getId() {
         return id;
     }
