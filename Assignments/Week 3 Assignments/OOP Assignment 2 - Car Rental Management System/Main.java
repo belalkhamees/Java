@@ -10,8 +10,9 @@ public class Main {
     private static int carsCount = 0,  customersCount = 0 ;
     private static int rentedCars = 0;
 
-//----------------------
-
+//-------------------------------------------------------------
+    //Class methods
+    
     public static void displayWelcomeBanner() {
         System.out.print("""
                            +------------------------------------------+
@@ -406,7 +407,7 @@ public class Main {
     }
 
 
-//-----------------------------------------------------------------
+//------------------------------------------------------------------
 
 
     public static void main(String[] args) {
