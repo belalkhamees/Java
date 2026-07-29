@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Main {
 
     //Class fields
-    private static final int MAX_CARS = 2, MAX_CUSTOMERS = 2;
+    private static final int MAX_CARS = 20, MAX_CUSTOMERS = 20;
     private static double officeTotalIncome = 0;
     private static int carsCount = 0,  customersCount = 0 ;
     private static int rentedCars = 0;
