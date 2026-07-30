@@ -7,12 +7,10 @@ public class Main {
     //Class fields
     private static final int MAX_CARS = 20, MAX_CUSTOMERS = 20;
     private static double officeTotalIncome = 0;
-    private static int carsCount = 0,  customersCount = 0 ;
     private static int rentedCars = 0;
 
-//-------------------------------------------------------------
-    //Class methods
-    
+//----------------------
+
     public static void displayWelcomeBanner() {
         System.out.print("""
                            +------------------------------------------+
@@ -69,7 +67,6 @@ public class Main {
 
         System.out.println("\nCar added successfully.\n" + "Car id: " + id);
 
-        carsCount++;
     }
 
     public static void addLuxuryCar(Scanner sc, Car[] cars){
@@ -99,7 +96,7 @@ public class Main {
 
         System.out.println("\nLuxury Car was added successfully.\n" + "Luxury car id: " + id);
 
-        carsCount++;
+
     }
 
 //---------------------
@@ -127,13 +124,12 @@ public class Main {
         System.out.println("----------------------------------------");
         System.out.println("\nCustomer was added successfully.\n" + "Customer name: " + name + "\nCustomer id: " + id);
 
-        customersCount++;
     }
 
 //---------------------
 
     public static void displayCars(Car[] cars){
-        if(carsCount == 0){
+        if(Car.getCarsCount() == 0){
             System.out.println("The Fleet Of Cars is Empty!");
             return;
         }
@@ -141,7 +137,7 @@ public class Main {
 
 
 
-        for(int i = 0; i < carsCount; i++){
+        for(int i = 0; i < Car.getCarsCount(); i++){
             System.out.println(cars[i].getInfo());
             System.out.println("---------------------------");
         }
@@ -151,7 +147,7 @@ public class Main {
         int count = 0;
         System.out.println("\n========== Available Cars ==========");
 
-        for(int i = 0; i < carsCount; i++){
+        for(int i = 0; i < Car.getCarsCount(); i++){
             if(cars[i].isAvailable()) {
                 System.out.println(cars[i].getInfo());
                 System.out.println("----------------------------");
@@ -249,7 +245,7 @@ public class Main {
         }
 
         Car returnedCar = null;
-        for (int i = 0; i < carsCount; i++) {
+        for (int i = 0; i < Car.getCarsCount(); i++) {
             if ( cars[i].getId().equals(rentedCarId) ) {
                 returnedCar = cars[i];
                 cars[i].returnCar();
@@ -300,7 +296,7 @@ public class Main {
             System.out.println("\n========== " + brand.toUpperCase() + " CARS ==========");
         }
 
-        for(int i = 0; i < carsCount; i++){
+        for(int i = 0; i < Car.getCarsCount(); i++){
             if(cars[i].getBrand().equalsIgnoreCase(brand)){
                 System.out.println(cars[i].getInfo());
                 brandCount++;
@@ -315,7 +311,7 @@ public class Main {
 
     public static void searchCustomerById(Customer[] customers, Scanner sc) {
 
-        if(customersCount == 0){
+        if(Customer.getCustomersCount() == 0){
             System.out.println("No customers found!");
             return;
         }
@@ -334,7 +330,7 @@ public class Main {
 
     public static void displayCustomers(Customer[] customers, Car[] cars){
 
-        if(customersCount == 0){
+        if(Customer.getCustomersCount() == 0){
             System.out.println("No customers found!");
             return;
         }
@@ -342,13 +338,13 @@ public class Main {
         System.out.println(
                 "\n====== CUSTOMER INFORMATION ======" );
 
-        for(int i = 0; i < customersCount; i++){
+        for(int i = 0; i < Customer.getCustomersCount(); i++){
             System.out.println("Customer " + (i + 1) + ": " + customers[i].getName());
             if(customers[i].getRentedCarId().equals("-1")){
                 System.out.println("Current Car: " + "None");
             }
             else{
-                for(int j = 0; j < carsCount; j++){
+                for(int j = 0; j < Car.getCarsCount(); j++){
                     if(cars[j].getId().equals(customers[i].getRentedCarId())){
                         System.out.println("Current Car: " + cars[j].getBrand() + " " + cars[j].getModel());
                         break;
@@ -365,12 +361,12 @@ public class Main {
     public static double calcAverageDailyPrice(Car[] cars){
         double sum = 0;
 
-        for(int i = 0; i < carsCount; i++){
+        for(int i = 0; i < Car.getCarsCount(); i++){
             sum += cars[i].getPricePerDay();
         }
 
         if(sum == 0) return sum;
-        return sum / carsCount;
+        return sum / Car.getCarsCount();
     }
 
     public static String returnMostExCar(Car[] cars){
@@ -397,17 +393,17 @@ public class Main {
 
         System.out.println(
                 "\n========== OFFICE STATISTICS ==========" +
-                "\nTotal Cars: " + carsCount +
+                "\nTotal Cars: " + Car.getCarsCount() +
                 "\nRented Cars: " + rentedCars +
                 "\nMost Expensive Car: " + returnMostExCar(cars) +
-                "\nCustomers: " + customersCount +
+                "\nCustomers: " + Customer.getCustomersCount() +
                 "\nAverage Daily Price: " + calcAverageDailyPrice(cars) +
                 "\nTotal Income: " + officeTotalIncome +
                 "\n---------------------------------------" );
     }
 
 
-//------------------------------------------------------------------
+//-----------------------------------------------------------------
 
 
     public static void main(String[] args) {
