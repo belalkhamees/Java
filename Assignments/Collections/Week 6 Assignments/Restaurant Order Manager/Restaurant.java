@@ -2,6 +2,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 public class Restaurant {
 
@@ -21,7 +23,7 @@ public class Restaurant {
 
     public boolean addMenuItem(MenuItem item) {
 
-        if (searchMenuItem(item.getId()) != null) {
+        if (searchMenuItem(item.getId()).isPresent()) {
             return false;
         }
 
@@ -57,16 +59,11 @@ public class Restaurant {
         }
     }
 
-    public MenuItem searchMenuItem(int id) {
+    public Optional<MenuItem> searchMenuItem(int id) {
 
-        for (MenuItem item : menu) {
+        Predicate<MenuItem> byId = item -> item.getId() == id;
 
-            if (item.getId() == id) {
-                return item;
-            }
-        }
-
-        return null;
+        return menu.stream().filter(byId).findFirst();
     }
 
     // ORDERS
@@ -82,28 +79,32 @@ public class Restaurant {
         return true;
     }
 
-    public Order searchOrder(int orderId) {
-        return orders.get(orderId);
+    public Optional<Order> searchOrder(int orderId) {
+        return Optional.ofNullable(orders.get(orderId));
     }
-
     public boolean addItemToOrder(int orderId, int menuItemId, int quantity) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.COMPLETED ||
                 order.getStatus() == OrderStatus.CANCELLED) {
             return false;
         }
 
-        MenuItem menuItem = searchMenuItem(menuItemId);
+        Optional<MenuItem> menuItemOptional =
+                searchMenuItem(menuItemId);
 
-        if (menuItem == null) {
+        if (menuItemOptional.isEmpty()) {
             return false;
         }
+
+        MenuItem menuItem = menuItemOptional.get();
 
         OrderItem orderItem = new OrderItem(menuItem, quantity);
 
@@ -114,11 +115,13 @@ public class Restaurant {
 
     public boolean removeItemFromOrder(int orderId, int menuItemId) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.COMPLETED ||
                 order.getStatus() == OrderStatus.CANCELLED) {
@@ -132,11 +135,13 @@ public class Restaurant {
 
     public boolean addOrderToKitchen(int orderId) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() != OrderStatus.PENDING) {
             return false;
@@ -168,11 +173,13 @@ public class Restaurant {
 
     public boolean cancelOrder(int orderId) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.COMPLETED ||
                 order.getStatus() == OrderStatus.CANCELLED ||
@@ -196,8 +203,6 @@ public class Restaurant {
 
         System.out.println("\n===== COMPLETED ORDERS =====");
 
-        for (Order order : completedOrders.values()) {
-            order.displayOrder();
-        }
+        completedOrders.values().forEach(Order::displayOrder);
     }
 }

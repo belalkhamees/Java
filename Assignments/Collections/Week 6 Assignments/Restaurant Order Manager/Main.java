@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.Optional;
 
 public class Main {
 
@@ -159,14 +160,15 @@ public class Main {
 
         sc.nextLine();
 
-        MenuItem item = restaurant.searchMenuItem(id);
+        Optional<MenuItem> item = restaurant.searchMenuItem(id);
 
-        if (item != null) {
-            System.out.println(item);
+        if (item.isPresent()) {
+            System.out.println(item.get());
         }
         else {
             System.out.println("Menu item not found.");
         }
+
     }
 
     private static void createOrder() {
@@ -207,32 +209,30 @@ public class Main {
 
         sc.nextLine();
 
-        Order order = restaurant.searchOrder(orderId);
+        Optional<Order> orderOptional =
+                restaurant.searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             System.out.println(
                     "Order not found."
             );
             return;
         }
 
+        Order order = orderOptional.get();
+
         if (order.getStatus() == OrderStatus.COMPLETED ||
                 order.getStatus() == OrderStatus.CANCELLED) {
 
-            System.out.println(
-                    "Completed or cancelled orders cannot be modified."
-            );
+            System.out.println("Completed or cancelled orders cannot be modified.");
 
             return;
         }
 
-        MenuItem item = restaurant.searchMenuItem(menuItemId);
+        Optional<MenuItem> itemOptional = restaurant.searchMenuItem(menuItemId);
 
-        if (item == null) {
-            System.out.println(
-                    "Menu item not found."
-            );
-
+        if (itemOptional.isEmpty()) {
+            System.out.println("Menu item not found.");
             return;
         }
 
@@ -263,12 +263,15 @@ public class Main {
 
         sc.nextLine();
 
-        Order order = restaurant.searchOrder(orderId);
+        Optional<Order> orderOptional =
+                restaurant.searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             System.out.println("Order not found.");
             return;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.COMPLETED ||
                 order.getStatus() == OrderStatus.CANCELLED) {
@@ -296,10 +299,11 @@ public class Main {
 
         sc.nextLine();
 
-        Order order = restaurant.searchOrder(orderId);
+        Optional<Order> orderOptional =
+                restaurant.searchOrder(orderId);
 
-        if (order != null) {
-            order.displayOrder();
+        if (orderOptional.isPresent()) {
+            orderOptional.get().displayOrder();
         }
         else {
             System.out.println(
@@ -316,14 +320,16 @@ public class Main {
 
         sc.nextLine();
 
-        Order order = restaurant.searchOrder(orderId);
+        Optional<Order> orderOptional = restaurant.searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
 
             return;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.IN_KITCHEN) {
 
@@ -384,11 +390,12 @@ public class Main {
 
         sc.nextLine();
 
-        Order order = restaurant.searchOrder(orderId);
+        Optional<Order> orderOptional = restaurant.searchOrder(orderId);
 
-        if (order != null) {
-            order.displayOrder();
-        } else {
+        if (orderOptional.isPresent()) {
+            orderOptional.get().displayOrder();
+        }
+        else {
             System.out.println(
                     "Order not found."
             );
@@ -403,12 +410,12 @@ public class Main {
 
         sc.nextLine();
 
-        Order order = restaurant.searchOrder(orderId);
+        Optional<Order> orderOptional =
+                restaurant.searchOrder(orderId);
 
-        if (order != null) {
+        if (orderOptional.isPresent()) {
 
-            System.out.println("Order Status: " + order.getStatus());
-
+            System.out.println("Order Status: " + orderOptional.get().getStatus());
         }
         else {
 
@@ -424,14 +431,17 @@ public class Main {
 
         sc.nextLine();
 
-        Order order = restaurant.searchOrder(orderId);
+        Optional<Order> orderOptional =
+                restaurant.searchOrder(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
 
             return;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.IN_KITCHEN) {
 
