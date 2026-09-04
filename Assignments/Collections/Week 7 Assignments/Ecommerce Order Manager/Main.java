@@ -1,3 +1,4 @@
+import java.util.Optional;
 import java.util.Scanner;
 
 public class Main {
@@ -91,18 +92,19 @@ public class Main {
                     break;
 
                 case 19:
-
-                    System.out.println("\nThank you for using E-Commerce Store Management System.");
+                    System.out.println("\nThank You For Using E-Commerce Management System.");
                     break;
             }
-        }while (choice != 19);
+
+        } while(choice != 19);
 
         sc.close();
     }
 
     public static void displayMenu() {
 
-        System.out.println("\n========== E-Commerce Order & Inventory Manager ==========");
+        System.out.println(
+                "\n========== E-Commerce Order & Inventory Manager ==========");
 
         System.out.println("1. Add Product");
         System.out.println("2. Remove Product");
@@ -124,8 +126,11 @@ public class Main {
         System.out.println("18. Display Orders Ordered by Total");
         System.out.println("19. Exit");
 
-        System.out.println("==========================================================");
+        System.out.println(
+                "==========================================================");
     }
+
+    //  PRODUCTS
 
     private static void addProduct(Scanner sc, Store store) {
 
@@ -139,7 +144,8 @@ public class Main {
 
         int stockQuantity = Validation.readNonNegativeInt(sc, "Enter stock quantity: ");
 
-        Product product = new Product(id, name, price, category, stockQuantity);
+        Product product =
+                new Product(id, name, price, category, stockQuantity);
 
         if (store.addProduct(product)) {
 
@@ -167,16 +173,21 @@ public class Main {
 
     private static void searchProduct(Scanner sc, Store store) {
 
-        int id = Validation.readPositiveInt(sc, "Enter product ID: ");
+        int id =
+                Validation.readPositiveInt(sc, "Enter product ID: ");
 
         store.displayProductById(id);
     }
 
+    //  ORDERS
+
     private static void createOrder(Scanner sc, Store store) {
 
-        int orderId = Validation.readPositiveInt(sc, "Enter order ID: ");
+        int orderId =
+                Validation.readPositiveInt(sc, "Enter order ID: ");
 
-        String customerName = Validation.readString(sc, "Enter customer name: ");
+        String customerName =
+                Validation.readString(sc, "Enter customer name: ");
 
         if (store.createOrder(orderId, customerName)) {
 
@@ -190,31 +201,43 @@ public class Main {
 
     private static void addItemToOrder(Scanner sc, Store store) {
 
-        int orderId = Validation.readPositiveInt(sc, "Enter order ID: ");
+        int orderId =
+                Validation.readPositiveInt(sc, "Enter order ID: ");
 
-        Order order = store.findOrderById(orderId);
+        Optional<Order> orderOptional =
+                store.findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
+
             return;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() != OrderStatus.PENDING) {
 
             System.out.println("Items cannot be added to this order.");
+
             return;
         }
 
-        int productId = Validation.readPositiveInt(sc, "Enter product ID: ");
+        int productId =
+                Validation.readPositiveInt(sc, "Enter product ID: ");
 
-        if (store.findProductById(productId) == null) {
+        Optional<Product> productOptional =
+                store.findProductById(productId);
+
+        if (productOptional.isEmpty()) {
 
             System.out.println("Product not found.");
+
             return;
         }
 
-        int quantity = Validation.readPositiveInt(sc, "Enter quantity: ");
+        int quantity =
+                Validation.readPositiveInt(sc, "Enter quantity: ");
 
         if (store.addItemToOrder(orderId, productId, quantity)) {
 
@@ -228,23 +251,29 @@ public class Main {
 
     private static void removeItemFromOrder(Scanner sc, Store store) {
 
-        int orderId = Validation.readPositiveInt(sc, "Enter order ID: ");
+        int orderId =
+                Validation.readPositiveInt(sc, "Enter order ID: ");
 
-        Order order = store.findOrderById(orderId);
+        Optional<Order> orderOptional = store.findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
+
             return;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() != OrderStatus.PENDING) {
 
             System.out.println("Items cannot be removed from this order.");
+
             return;
         }
 
-        int productId = Validation.readPositiveInt(sc, "Enter product ID: ");
+        int productId =
+                Validation.readPositiveInt(sc, "Enter product ID: ");
 
         if (store.removeItemFromOrder(orderId, productId)) {
 
@@ -256,44 +285,58 @@ public class Main {
         }
     }
 
+    //  OPTION 10
+
     private static void displayOrder(Scanner sc, Store store) {
 
-        int orderId = Validation.readPositiveInt(sc, "Enter order ID: ");
+        int orderId =
+                Validation.readPositiveInt(sc, "Enter order ID: ");
 
-        Order order = store.findOrderById(orderId);
+        Optional<Order> orderOptional =
+                store.findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
 
         } else {
 
+            Order order = orderOptional.get();
+
             order.displayOrder();
         }
     }
 
+    //  SHIPPING
 
     private static void addOrderToShipping(Scanner sc, Store store) {
 
-        int orderId = Validation.readPositiveInt(sc, "Enter order ID: ");
+        int orderId =
+                Validation.readPositiveInt(sc, "Enter order ID: ");
 
-        Order order = store.findOrderById(orderId);
+        Optional<Order> orderOptional =
+                store.findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
+
             return;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() != OrderStatus.PENDING) {
 
             System.out.println("Only pending orders can be added to shipping.");
+
             return;
         }
 
         if (!order.hasItems()) {
 
             System.out.println("An order with no items cannot be placed in shipping.");
+
             return;
         }
 
@@ -319,27 +362,35 @@ public class Main {
         }
     }
 
+    //  CANCEL ORDER
+
     private static void cancelOrder(Scanner sc, Store store) {
 
-        int orderId = Validation.readPositiveInt(sc, "Enter order ID: ");
+        int orderId =
+                Validation.readPositiveInt(sc, "Enter order ID: ");
 
-        Order order = store.findOrderById(orderId);
+        Optional<Order> orderOptional = store.findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
+
             return;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.DELIVERED) {
 
             System.out.println("Delivered orders cannot be cancelled.");
+
             return;
         }
 
         if (order.getStatus() == OrderStatus.CANCELLED) {
 
             System.out.println("Order is already cancelled.");
+
             return;
         }
 
@@ -353,43 +404,56 @@ public class Main {
         }
     }
 
+    //  OPTION 14
+
     private static void searchOrder(Scanner sc, Store store) {
 
-        int orderId = Validation.readPositiveInt(sc, "Enter order ID: ");
+        int orderId =
+                Validation.readPositiveInt(sc, "Enter order ID: ");
 
-        Order order = store.findOrderById(orderId);
+        Optional<Order> orderOptional =
+                store.findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
 
             System.out.println("Order not found.");
 
         } else {
 
-            System.out.println(order);
+            System.out.println(orderOptional.get());
         }
     }
 
+    //  REVIEWS
+
     private static void addReview(Scanner sc, Store store) {
 
-        int productId = Validation.readPositiveInt(sc, "Enter product ID: ");
+        int productId =
+                Validation.readPositiveInt(sc, "Enter product ID: ");
 
-        if (store.findProductById(productId) == null) {
+        if (store.findProductById(productId).isEmpty()) {
 
-            System.out.println("Product not found.");
+            System.out.println(
+                    "Product not found.");
+
             return;
         }
 
-        String customerName = Validation.readString(sc, "Enter customer name: ");
+        String customerName =
+                Validation.readString(sc, "Enter customer name: ");
 
-        String comment = Validation.readString(sc, "Enter comment: ");
+        String comment =
+                Validation.readString(sc, "Enter comment: ");
 
         if (store.addReview(productId, customerName, comment)) {
 
-            System.out.println("Review added successfully.");
+            System.out.println(
+                    "Review added successfully.");
 
         } else {
 
-            System.out.println("Review could not be added.");
+            System.out.println(
+                    "Review could not be added.");
         }
     }
 
@@ -397,9 +461,10 @@ public class Main {
 
         int productId = Validation.readPositiveInt(sc, "Enter product ID: ");
 
-        if (store.findProductById(productId) == null) {
+        if (store.findProductById(productId).isEmpty()) {
 
             System.out.println("Product not found.");
+
             return;
         }
 

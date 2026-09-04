@@ -7,8 +7,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Store {
 
@@ -31,7 +34,7 @@ public class Store {
         reviews = new ArrayList<>();
     }
 
-    // PRODUCTS
+    //  PRODUCTS
 
     public boolean addProduct(Product product) {
 
@@ -40,53 +43,40 @@ public class Store {
         }
 
         products.add(product);
-
         productById.put(product.getId(), product);
-
         categories.add(product.getCategory());
 
         return true;
     }
 
-    public Product findProductById(int id) {
-        return productById.get(id);
+
+    public Optional<Product> findProductById(int id) {
+        return Optional.ofNullable(productById.get(id));
     }
 
     public boolean removeProduct(int id) {
 
-        if (!productById.containsKey(id)) {
+        Optional<Product> product = findProductById(id);
+
+        if (product.isEmpty()) {
             return false;
         }
 
-        deleteProductEverywhere(id, null);
-
-        return true;
-    }
-
-    private void deleteProductEverywhere(int id, Iterator<Product> iterator) {
-
-        Product product = productById.remove(id);
-
-        if (product == null) {
-            return;
-        }
-
-        if (iterator != null) {
-            iterator.remove();
-        } else {
-            products.remove(product);
-        }
+        products.remove(product.get());
+        productById.remove(id);
 
         updateCategories();
+
+        return true;
     }
 
     private void updateCategories() {
 
         categories.clear();
 
-        for (Product product : products) {
-            categories.add(product.getCategory());
-        }
+        products.stream()
+                .map(Product::getCategory)
+                .forEach(categories::add);
     }
 
     public void displayAllProducts() {
@@ -96,24 +86,23 @@ public class Store {
             return;
         }
 
-        for (Product product : products) {
 
-            System.out.println(product);
-            System.out.println("--------------------");
-        }
+        products.stream().forEach(System.out::println);
+
+        System.out.println("--------------------");
     }
 
     public void displayProductById(int id) {
 
-        Product product = productById.get(id);
+        Optional<Product> product = findProductById(id);
 
-        if (product == null) {
+        if (product.isEmpty()) {
 
             System.out.println("Product not found.");
 
         } else {
 
-            System.out.println(product);
+            System.out.println(product.get());
         }
     }
 
@@ -124,15 +113,14 @@ public class Store {
             return;
         }
 
-        for (String category : categories) {
-            System.out.println(category);
-        }
+
+        categories.stream()
+                .forEach(System.out::println);
     }
 
     public void displayProductsByPrice() {
 
         if (products.isEmpty()) {
-
             System.out.println("No products available.");
             return;
         }
@@ -141,10 +129,44 @@ public class Store {
 
         Collections.sort(sortedProducts);
 
-        for (Product product : sortedProducts) {
 
-            System.out.println(product);
-            System.out.println("--------------------");
+        sortedProducts.forEach(System.out::println);
+    }
+
+
+    public List<Product> filterProducts(Predicate<Product> condition) {
+
+        return products.stream().filter(condition).collect(Collectors.toList());
+    }
+
+    public void displayProductsByCategory(String category) {
+
+        List<Product> filteredProducts =
+                filterProducts(product -> product.getCategory().equalsIgnoreCase(category));
+
+        if (filteredProducts.isEmpty()) {
+
+            System.out.println("No products found in this category.");
+
+        } else {
+
+            filteredProducts.forEach(System.out::println);
+        }
+    }
+
+    public void displayExpensiveProducts(double price) {
+
+        List<Product> filteredProducts =
+                filterProducts(product ->
+                        product.getPrice() > price);
+
+        if (filteredProducts.isEmpty()) {
+
+            System.out.println("No products found.");
+
+        } else {
+
+            filteredProducts.forEach(System.out::println);
         }
     }
 
@@ -162,13 +184,18 @@ public class Store {
 
                 int id = product.getId();
 
-                deleteProductEverywhere(id, iterator);
+                iterator.remove();
+
+                productById.remove(id);
 
                 removedCount++;
             }
         }
 
-        System.out.println(removedCount + " out of stock products removed.");
+        updateCategories();
+
+        System.out.println(
+                removedCount + " out-of-stock product(s) removed.");
     }
 
     // ORDERS
@@ -186,40 +213,45 @@ public class Store {
         return true;
     }
 
-    public Order findOrderById(int orderId) {
-        return orders.get(orderId);
+
+    public Optional<Order> findOrderById(int orderId) {
+        return Optional.ofNullable(orders.get(orderId));
     }
 
     public boolean addItemToOrder(int orderId, int productId, int quantity) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() != OrderStatus.PENDING) {
             return false;
         }
 
-        Product product = productById.get(productId);
+        Optional<Product> productOptional = findProductById(productId);
 
-        if (product == null) {
+        if (productOptional.isEmpty()) {
             return false;
         }
 
-        order.addItem(product, quantity);
+        order.addItem(productOptional.get(), quantity);
 
         return true;
     }
 
     public boolean removeItemFromOrder(int orderId, int productId) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() != OrderStatus.PENDING) {
             return false;
@@ -228,16 +260,17 @@ public class Store {
         return order.removeItem(productId);
     }
 
-
     // SHIPPING
 
     public boolean addOrderToShipping(int orderId) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() != OrderStatus.PENDING) {
             return false;
@@ -278,15 +311,17 @@ public class Store {
         return true;
     }
 
-    // CANCEL
+    //  CANCEL ORDER
 
     public boolean cancelOrder(int orderId) {
 
-        Order order = orders.get(orderId);
+        Optional<Order> orderOptional = findOrderById(orderId);
 
-        if (order == null) {
+        if (orderOptional.isEmpty()) {
             return false;
         }
+
+        Order order = orderOptional.get();
 
         if (order.getStatus() == OrderStatus.DELIVERED) {
             return false;
@@ -309,7 +344,7 @@ public class Store {
 
     public boolean addReview(int productId, String customerName, String comment) {
 
-        if (!productById.containsKey(productId)) {
+        if (findProductById(productId).isEmpty()) {
             return false;
         }
 
@@ -322,21 +357,20 @@ public class Store {
 
     public void displayReviewsForProduct(int productId) {
 
-        boolean found = false;
+        List<Review> productReviews =
+                reviews.stream().filter(review -> review.getProductId() == productId).collect(Collectors.toList());
 
-        for (Review review : reviews) {
+        if (productReviews.isEmpty()) {
 
-            if (review.getProductId() == productId) {
+            System.out.println(
+                    "No reviews found for this product.");
 
+        } else {
+
+            productReviews.forEach(review -> {
                 System.out.println(review);
                 System.out.println("--------------------");
-
-                found = true;
-            }
-        }
-
-        if (!found) {
-            System.out.println("No reviews found for this product.");
+            });
         }
     }
 
@@ -345,7 +379,6 @@ public class Store {
     public void displayOrdersByTotal() {
 
         if (orders.isEmpty()) {
-
             System.out.println("No orders available.");
             return;
         }
@@ -354,23 +387,6 @@ public class Store {
 
         Collections.sort(sortedOrders, new OrderTotalComparator());
 
-        for (Order order : sortedOrders) {
-
-            System.out.println(order);
-            System.out.println("--------------------");
-        }
+        sortedOrders.forEach(System.out::println);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
