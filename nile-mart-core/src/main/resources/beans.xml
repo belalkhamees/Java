@@ -11,7 +11,7 @@
     <bean id="promotionalPricing" class="org.route.PromotionalPricingService">
     </bean>
 
-    <bean id="inMemoryRepo" class="org.route.InMemoryProductRepository"/>
+    <bean id="inMemoryRepo" class="org.route.repository.InMemoryProductRepository"/>
 
     <bean id="productService" class="org.route.ProductService" scope="prototype">
         <constructor-arg ref="standardPricing"/>

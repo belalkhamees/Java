@@ -5,16 +5,19 @@ import lombok.*;
 import java.math.BigDecimal;
 
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@EqualsAndHashCode
 @Builder
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+
 public class Product {
-    private String name;
+
+    @EqualsAndHashCode.Include
     private String sku;
+    private String name;
     private BigDecimal price;
-    private String category;
-    private boolean isActive;
+    private Category category;
+    @Setter private int stockQuantity;
+
    }
