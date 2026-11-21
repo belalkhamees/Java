@@ -2,7 +2,8 @@ package org.route.repository;
 
 import org.route.Category;
 import org.route.Product;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
+import jakarta.annotation.PostConstruct;
 
 import java.util.List;
 import java.util.Map;
@@ -10,6 +11,8 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.math.BigDecimal;
 
+
+@Repository
 public class InMemoryProductRepository implements ProductRepository {
 
     private final Map<String, Product> products = new ConcurrentHashMap<>();
@@ -31,7 +34,7 @@ public class InMemoryProductRepository implements ProductRepository {
         return product;
     }
 
-
+    @PostConstruct
     public void loadProducts() {
 
         save(Product.builder()

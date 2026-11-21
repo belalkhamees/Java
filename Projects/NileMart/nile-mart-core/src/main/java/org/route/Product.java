@@ -20,4 +20,4 @@ public class Product {
     private Category category;
     @Setter private int stockQuantity;
 
-   }
+}

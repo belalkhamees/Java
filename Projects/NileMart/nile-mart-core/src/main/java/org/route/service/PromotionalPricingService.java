@@ -3,22 +3,24 @@ package org.route.service;
 
 import org.route.Product;
 import org.route.common.Money;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-public class PromotionalPricingService implements PricingService{
+@Component
+public class PromotionalPricingService implements PricingService {
 
-    private static final BigDecimal DISCOUNT = new BigDecimal("0.20");
-
+    @Value("${store.discount-amount}")
+    private BigDecimal discountAmount;
 
     @Override
     public BigDecimal calculatePrice(Product product, int quantity) {
         BigDecimal total = product.getPrice().multiply(BigDecimal.valueOf(quantity));
 
-        BigDecimal discount = total.multiply(DISCOUNT);
+        BigDecimal discountRate = discountAmount.movePointLeft(2);
+        BigDecimal discount = total.multiply(discountRate);
+
         return Money.scale(total.subtract(discount));
     }
 }
-
-
-

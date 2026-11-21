@@ -1,25 +1,33 @@
 package org.route.service;
 
+import lombok.RequiredArgsConstructor;
 import org.route.Category;
 import org.route.Product;
 import org.route.common.*;
 import org.route.repository.ProductRepository;
-
+import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@RequiredArgsConstructor
+@Service
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final PricingService pricingService;
 
+    @Value("${store.max-quantity-per-product}")
+    private int maxQuantityPerProduct;
 
-    public ProductService(ProductRepository productRepository, PricingService pricingService) {
-        this.productRepository = productRepository;
-        this.pricingService = pricingService;
-    }
+    @Value("${store.vat-rate}")
+    private BigDecimal vatRate;
+
+    @Value("${store.free-shipping-threshold}")
+    private BigDecimal freeShippingThreshold;
+
 
     public List<Product> findAll(){
         return productRepository.findAll().stream()
@@ -37,7 +45,10 @@ public class ProductService {
         if (quantity <= 0) {
             throw new StoreException("Quantity must be greater than zero.");
         }
-
+        if (quantity > maxQuantityPerProduct) {
+            throw new StoreException("Maximum quantity per product is "
+                    + maxQuantityPerProduct + ".");
+        }
         Product product = findBySku(sku);
 
         BigDecimal total = pricingService.calculatePrice(product,quantity);
@@ -77,3 +88,5 @@ public class ProductService {
     }
 
 }
+
+
