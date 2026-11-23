@@ -1,6 +1,7 @@
 
 package org.route;
 
+import org.route.cart.ShoppingCart;
 import org.route.config.AppConfig;
 import org.route.model.Customer;
 import org.route.notification.NotificationService;
@@ -18,51 +19,37 @@ public class Main {
         try (AnnotationConfigApplicationContext context =
                      new AnnotationConfigApplicationContext(AppConfig.class)) {
 
-            // Stage 2 test
-            ProductService productService = context.getBean(ProductService.class);
-            productService.findAll().forEach(System.out::println);
-
-            // Stage 3: Shipping test
-            ShippingQuoteService shippingService =
-                    context.getBean(ShippingQuoteService.class);
-
-            System.out.println("\n========== SHIPPING TEST ==========");
-
-            System.out.println("Cairo: " +
-                    shippingService.quote(
-                            Governorate.CAIRO,
-                            new BigDecimal("5000.00")
-                    ));
-
-            System.out.println("Matrouh: " +
-                    shippingService.quote(
-                            Governorate.MATROUH,
-                            new BigDecimal("999999.00")
-                    ));
-
-            // Stage 3: Notifications test
-            NotificationService notificationService =
-                    context.getBean(NotificationService.class);
-
-            Customer customer = new Customer(
-                    "Mona",
+            Customer ahmed = new Customer(
+                    "Ahmed Ali",
                     "01012345678",
-                    "mona@example.com"
+                    "ahmed@gmail.com"
             );
 
-            System.out.println("\n========== NOTIFICATION TEST ==========");
-
-            notificationService.sendToAll(
-                    customer,
-                    "Your order has been confirmed!"
+            Customer mona = new Customer(
+                    "Mona Hassan",
+                    "01112345678",
+                    "mona@gmail.com"
             );
 
-            // Stage 2: Bean definitions
-            System.out.println("\n========== BEAN DEFINITIONS ==========");
+            ShoppingCart ahmedCart = context.getBean(ShoppingCart.class);
+            ShoppingCart monaCart = context.getBean(ShoppingCart.class);
 
-            for (String beanName : context.getBeanDefinitionNames()) {
-                System.out.println(beanName);
-            }
+            ahmedCart.open(1, ahmed);
+            monaCart.open(2, mona);
+
+            // Ahmed's cart
+            ahmedCart.addItem("ACC-CHG-20W", 2);
+            ahmedCart.addItem("HOM-PAN-28", 1);
+
+            // Mona's cart
+            monaCart.addItem("ACC-BUDS-6", 1);
+
+            System.out.println("Ahmed's cart:");
+            System.out.println(ahmedCart.view());
+
+            System.out.println("Mona's cart:");
+            System.out.println(monaCart.view());
+
         }
     }
 }
