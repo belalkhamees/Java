@@ -1,7 +1,7 @@
 
 package org.route.service;
 
-import org.route.Product;
+import org.route.model.Product;
 import org.route.common.Money;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;

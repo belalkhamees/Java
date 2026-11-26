@@ -2,7 +2,7 @@
 package org.route.cart;
 
 import lombok.Getter;
-import org.route.Product;
+import org.route.model.Product;
 import org.route.common.Money;
 import org.route.common.OutOfStockException;
 import org.route.common.StoreException;

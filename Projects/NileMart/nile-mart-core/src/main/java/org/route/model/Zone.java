@@ -1,4 +1,4 @@
-package org.route.shipping;
+package org.route.model;
 
 import java.math.BigDecimal;
 import java.util.EnumSet;

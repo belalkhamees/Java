@@ -1,5 +1,6 @@
 package org.route.shipping;
 
+import org.route.model.Governorate;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

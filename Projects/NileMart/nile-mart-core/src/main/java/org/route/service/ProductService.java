@@ -1,8 +1,8 @@
 package org.route.service;
 
 import lombok.RequiredArgsConstructor;
-import org.route.Category;
-import org.route.Product;
+import org.route.model.Category;
+import org.route.model.Product;
 import org.route.common.*;
 import org.route.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -87,6 +87,20 @@ public class ProductService {
                 ));
     }
 
+    public void checkStock(String sku, int quantity) {
+        if (quantity <= 0) {
+            throw new StoreException("Quantity must be greater than zero.");
+        }
+
+        Product product = findBySku(sku);
+
+        if (product.getStockQuantity() < quantity) {
+            throw new OutOfStockException(
+                    "Only " + product.getStockQuantity()
+                            + " is available for " + product.getName() + "."
+            );
+        }
+    }
 }
 
 

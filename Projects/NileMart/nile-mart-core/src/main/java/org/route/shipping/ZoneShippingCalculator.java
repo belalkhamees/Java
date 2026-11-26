@@ -1,5 +1,6 @@
 package org.route.shipping;
 
+import org.route.model.Governorate;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 

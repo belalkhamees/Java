@@ -1,7 +1,7 @@
 
 package org.route.service;
 
-import org.route.Product;
+import org.route.model.Product;
 import java.math.BigDecimal;
 
 public interface PricingService {

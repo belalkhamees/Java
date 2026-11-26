@@ -1,4 +1,4 @@
-package org.route.shipping;
+package org.route.model;
 
 public enum Governorate {
 

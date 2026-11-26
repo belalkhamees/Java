@@ -1,6 +1,6 @@
 package org.route.service;
 
-import org.route.Product;
+import org.route.model.Product;
 import org.route.common.Money;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;

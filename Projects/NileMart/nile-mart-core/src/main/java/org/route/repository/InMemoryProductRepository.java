@@ -1,8 +1,8 @@
 package org.route.repository;
 
 import jakarta.annotation.PreDestroy;
-import org.route.Category;
-import org.route.Product;
+import org.route.model.Category;
+import org.route.model.Product;
 import org.route.common.StoreException;
 import org.springframework.stereotype.Repository;
 import jakarta.annotation.PostConstruct;

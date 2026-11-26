@@ -1,6 +1,6 @@
 package org.route.repository;
 
-import org.route.Product;
+import org.route.model.Product;
 
 import java.util.Optional;
 
