@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view carts/view | GET /carts/{number}
+     model: cart CartView, products List<Product> (stock > 0 only)
+     posts: POST /carts/items (cartNumber, sku, quantity) -->
+<head th:replace="~{fragments/layout :: head('Cart')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('carts')}"></header>
+<main class="wrap">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <h1>Cart <span th:text="'#' + ${cart.number()}">#1</span></h1>
+    <p><b th:text="${cart.customer().fullName()}">Mona Adel</b>
+        - <span th:text="${cart.customer().phone()}">01012345678</span>
+        <span th:if="${cart.customer().email() != null}" th:text="'- ' + ${cart.customer().email()}"></span></p>
+    <p class="notice" th:if="${cart.empty()}">This cart is empty.</p>
+    <table th:unless="${cart.empty()}">
+        <tr><th>Product</th><th>SKU</th><th class="num">Qty</th><th class="num">Line price (EGP)</th></tr>
+        <tr th:each="line : ${cart.lines()}">
+            <td th:text="${line.name()}">Fast Charger 20W</td>
+            <td th:text="${line.sku()}">ACC-CHG-20W</td>
+            <td class="num" th:text="${line.quantity()}">2</td>
+            <td class="num" th:text="${#numbers.formatDecimal(line.linePrice(), 1, 'COMMA', 2, 'POINT')}">1,300.00</td>
+        </tr>
+        <tr class="grand"><td colspan="3" class="num">Subtotal</td>
+            <td class="num" th:text="${#numbers.formatDecimal(cart.subtotal(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+    </table>
+    <h2>Add a product</h2>
+    <form method="post" th:action="@{/carts/items}">
+        <input type="hidden" name="cartNumber" th:value="${cart.number()}">
+        <select name="sku">
+            <option th:each="p : ${products}" th:value="${p.sku}"
+                    th:text="${p.name} + ' (' + ${p.stockQuantity} + ' in stock)'">Product</option>
+        </select>
+        <input type="number" name="quantity" value="1" min="1" max="10" style="width:60px">
+        <button type="submit">Add</button>
+    </form>
+    <p>
+        <a class="btn primary" th:unless="${cart.empty()}" th:href="@{/carts/{n}/checkout(n=${cart.number()})}">Checkout</a>
+        <a th:href="@{/products(cart=${cart.number()})}">Continue shopping</a>
+    </p>
+</main>
+</body>
+</html>

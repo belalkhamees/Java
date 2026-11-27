@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view carts/list | GET /carts
+     model: carts List<CartView> -->
+<head th:replace="~{fragments/layout :: head('Carts')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('carts')}"></header>
+<main class="wrap">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <h1>Carts</h1>
+    <p><a class="btn primary" th:href="@{/carts/new}">New cart</a></p>
+    <p class="notice" th:if="${#lists.isEmpty(carts)}">No carts yet.</p>
+    <table th:unless="${#lists.isEmpty(carts)}">
+        <tr><th>Cart</th><th>Customer</th><th class="num">Items</th><th class="num">Subtotal (EGP)</th><th></th></tr>
+        <tr th:each="c : ${carts}">
+            <td th:text="'#' + ${c.number()}">#1</td>
+            <td th:text="${c.customer().fullName()}">Mona Adel</td>
+            <td class="num" th:text="${c.itemCount()}">0</td>
+            <td class="num" th:text="${#numbers.formatDecimal(c.subtotal(), 1, 'COMMA', 2, 'POINT')}">0.00</td>
+            <td><a th:href="@{/carts/{n}(n=${c.number()})}">Open</a></td>
+        </tr>
+    </table>
+</main>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view products/list | GET /products
+     model: groups Map<Category,List<Product>>, carts List<CartView>, selectedCart Integer or null
+     posts: POST /carts/items  (sku, cartNumber, quantity) -->
+<head th:replace="~{fragments/layout :: head('Products')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('products')}"></header>
+<main class="wrap">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <h1>Products</h1>
+    <p class="notice" th:if="${#lists.isEmpty(carts)}">
+        No cart yet. <a th:href="@{/carts/new}">Create a cart</a> to start shopping.</p>
+    <section th:each="group : ${groups}">
+        <h2 th:text="${group.key.description}">Electronics</h2>
+        <div class="grid">
+            <div class="card" th:each="p : ${group.value}">
+                <b th:text="${p.name}">Product</b><br>
+                <small th:text="${p.sku}">SKU</small><br>
+                <b th:text="${#numbers.formatDecimal(p.price, 1, 'COMMA', 2, 'POINT')} + ' EGP'">0.00 EGP</b><br>
+                <span th:if="${p.stockQuantity > 0}" th:text="${p.stockQuantity} + ' in stock'">5 in stock</span>
+                <span class="out" th:if="${p.stockQuantity == 0}">Out of stock</span>
+                <form method="post" th:action="@{/carts/items}"
+                      th:if="${p.stockQuantity > 0 and !#lists.isEmpty(carts)}">
+                    <input type="hidden" name="sku" th:value="${p.sku}">
+                    <select name="cartNumber">
+                        <option th:each="c : ${carts}" th:value="${c.number()}"
+                                th:selected="${selectedCart != null and selectedCart == c.number()}"
+                                th:text="'Cart ' + ${c.number()} + ' - ' + ${c.customer().fullName()}">Cart 1</option>
+                    </select>
+                    <input type="number" name="quantity" value="1" min="1" max="10" style="width:60px">
+                    <button type="submit">Add</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

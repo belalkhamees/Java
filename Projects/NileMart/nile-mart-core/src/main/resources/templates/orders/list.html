@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view orders/list | GET /orders
+     model: orders List<Order> (newest first), revenue BigDecimal -->
+<head th:replace="~{fragments/layout :: head('Orders')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('orders')}"></header>
+<main class="wrap">
+    <h1>Orders</h1>
+    <p class="notice" th:if="${#lists.isEmpty(orders)}">No orders yet.</p>
+    <table th:unless="${#lists.isEmpty(orders)}">
+        <tr><th>Order</th><th>Customer</th><th>Governorate</th><th class="num">Total (EGP)</th></tr>
+        <tr th:each="o : ${orders}">
+            <td><a th:href="@{/orders/{n}(n=${o.orderNumber()})}" th:text="${o.orderNumber()}">NM-20261026-00001</a></td>
+            <td th:text="${o.customer().fullName()}">Mona Adel</td>
+            <td th:text="${o.governorate().label}">Giza</td>
+            <td class="num" th:text="${#numbers.formatDecimal(o.total(), 1, 'COMMA', 2, 'POINT')}">0.00</td>
+        </tr>
+        <tr class="grand"><td colspan="3" class="num">Revenue</td>
+            <td class="num" th:text="${#numbers.formatDecimal(revenue, 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+    </table>
+</main>
+</body>
+</html>

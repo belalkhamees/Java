@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view carts/new | GET /carts/new
+     model: form NewCartForm (fullName, phone, email)
+     posts: POST /carts (fullName, phone, email; email may be blank) -->
+<head th:replace="~{fragments/layout :: head('New cart')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('carts')}"></header>
+<main class="wrap">
+    <h1>New cart</h1>
+    <form class="stack" method="post" th:action="@{/carts}" th:object="${form}">
+        <label>Full name <input type="text" th:field="*{fullName}"></label>
+        <label>Phone (11 digits) <input type="text" th:field="*{phone}"></label>
+        <label>Email (optional) <input type="text" th:field="*{email}"></label>
+        <div><button class="primary" type="submit">Create cart</button>
+            <a th:href="@{/carts}">Cancel</a></div>
+    </form>
+</main>
+</body>
+</html>

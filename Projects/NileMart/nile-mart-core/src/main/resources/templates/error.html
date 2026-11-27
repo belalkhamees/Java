@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view error | used by GlobalExceptionHandler for every StoreException
+     model: status int (400, 404 or 409), message String -->
+<head th:replace="~{fragments/layout :: head('Error')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('')}"></header>
+<main class="wrap">
+    <div class="error">
+        <p class="code" th:text="${status}">400</p>
+        <h1>We could not do that</h1>
+        <p th:text="${message}">Only 3 available for Non-stick Frying Pan 28cm.</p>
+        <p><a class="btn primary" href="javascript:history.back()">Go back</a>
+            <a th:href="@{/products}">Products</a></p>
+    </div>
+</main>
+</body>
+</html>

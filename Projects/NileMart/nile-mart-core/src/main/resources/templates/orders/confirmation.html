@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view orders/confirmation | GET /orders/{orderNumber}
+     model: order, Order (orderNumber, customer, governorate, lines, subtotal, vat, shippingFee, total) -->
+<head th:replace="~{fragments/layout :: head('Order')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('orders')}"></header>
+<main class="wrap">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <h1>Order <span th:text="${order.orderNumber()}">NM-20261026-00001</span></h1>
+    <p><b th:text="${order.customer().fullName()}">Mona Adel</b>
+        - <span th:text="${order.customer().phone()}">01012345678</span>
+        <span th:if="${order.customer().email() != null}" th:text="'- ' + ${order.customer().email()}"></span><br>
+        Ships to <b th:text="${order.governorate().label}">Giza</b></p>
+    <table>
+        <tr><th>Product</th><th>SKU</th><th class="num">Qty</th><th class="num">Line price (EGP)</th></tr>
+        <tr th:each="line : ${order.lines()}">
+            <td th:text="${line.name()}">Fast Charger 20W</td>
+            <td th:text="${line.sku()}">ACC-CHG-20W</td>
+            <td class="num" th:text="${line.quantity()}">2</td>
+            <td class="num" th:text="${#numbers.formatDecimal(line.linePrice(), 1, 'COMMA', 2, 'POINT')}">1,300.00</td>
+        </tr>
+        <tr><td colspan="3" class="num">Subtotal</td>
+            <td class="num" th:text="${#numbers.formatDecimal(order.subtotal(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+        <tr><td colspan="3" class="num">VAT</td>
+            <td class="num" th:text="${#numbers.formatDecimal(order.vat(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+        <tr><td colspan="3" class="num">Shipping</td>
+            <td class="num" th:text="${#numbers.formatDecimal(order.shippingFee(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+        <tr class="grand"><td colspan="3" class="num">Total</td>
+            <td class="num" th:text="${#numbers.formatDecimal(order.total(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+    </table>
+    <p><a class="btn primary" th:href="@{/products}">Keep shopping</a> <a th:href="@{/orders}">All orders</a></p>
+</main>
+</body>
+</html>

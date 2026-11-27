@@ -1,6 +1,7 @@
 
 package org.route.console;
 
+import org.route.cart.CartRegistry;
 import org.route.cart.CartView;
 import org.route.cart.LineView;
 import org.route.cart.ShoppingCart;
@@ -12,25 +13,23 @@ import org.route.model.Governorate;
 import org.route.model.Order;
 import org.route.model.Product;
 import org.route.service.ProductService;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Scanner;
 
 public class StoreConsole {
 
-    private final AnnotationConfigApplicationContext context;
+    private final CartRegistry cartRegistry;
     private final ProductService productService;
     private final CheckoutService checkoutService;
 
-    private final Map<Integer, ShoppingCart> carts = new HashMap<>();
-    private int nextCartNumber = 1;
+    public StoreConsole(
+            CartRegistry cartRegistry,
+            ProductService productService,
+            CheckoutService checkoutService) {
 
-    public StoreConsole(AnnotationConfigApplicationContext context) {
-        this.context = context;
-        this.productService = context.getBean(ProductService.class);
-        this.checkoutService = context.getBean(CheckoutService.class);
+        this.cartRegistry = cartRegistry;
+        this.productService = productService;
+        this.checkoutService = checkoutService;
     }
 
     public void run() {
@@ -97,25 +96,17 @@ public class StoreConsole {
 
         Customer customer = new Customer(name, phone, email);
 
-        ShoppingCart cart = context.getBean(ShoppingCart.class);
+        ShoppingCart cart = cartRegistry.open(customer);
 
-        int number = nextCartNumber++;
-
-        cart.open(number, customer);
-
-        carts.put(number, cart);
-
-        System.out.println("Cart created successfully. Cart number: " + number);
+        System.out.println(
+                "Cart created successfully. Cart number: " + cart.getNumber()
+        );
     }
 
     private void addProduct(Scanner scanner) {
         int cartNumber = readInt(scanner, "Enter cart number: ");
 
-        ShoppingCart cart = carts.get(cartNumber);
-
-        if (cart == null) {
-            throw new StoreException("Cart " + cartNumber + " was not found.");
-        }
+        ShoppingCart cart = cartRegistry.get(cartNumber);
 
         System.out.print("Enter product SKU: ");
         String sku = scanner.nextLine();
@@ -130,11 +121,7 @@ public class StoreConsole {
     private void showCart(Scanner scanner) {
         int cartNumber = readInt(scanner, "Enter cart number: ");
 
-        ShoppingCart cart = carts.get(cartNumber);
-
-        if (cart == null) {
-            throw new StoreException("Cart " + cartNumber + " was not found.");
-        }
+        ShoppingCart cart = cartRegistry.get(cartNumber);
 
         CartView view = cart.view();
 
@@ -163,11 +150,7 @@ public class StoreConsole {
     private void checkout(Scanner scanner) {
         int cartNumber = readInt(scanner, "Enter cart number: ");
 
-        ShoppingCart cart = carts.get(cartNumber);
-
-        if (cart == null) {
-            throw new StoreException("Cart " + cartNumber + " was not found.");
-        }
+        ShoppingCart cart = cartRegistry.get(cartNumber);
 
         System.out.println("\nSelect governorate:");
 

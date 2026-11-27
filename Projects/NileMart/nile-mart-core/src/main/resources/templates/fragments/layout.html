@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="head(title)">
+    <meta charset="UTF-8">
+    <title th:text="${title} + ' | NileMart'">NileMart</title>
+    <style>
+        body{margin:0;font:15px/1.5 system-ui,Arial,sans-serif;color:#1d2233;background:#f5f6fb}
+        .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+        header{background:#1b2559}
+        header .wrap{display:flex;justify-content:space-between;align-items:center;height:54px}
+        header a{color:#c9d0f2;text-decoration:none;margin-left:18px}
+        header a.brand{color:#fff;font-weight:700;font-size:20px;margin:0}
+        header a.active{color:#fff;border-bottom:2px solid #fff}
+        main{padding:24px 0 40px}h1{color:#1b2559}a{color:#2f4aa8}
+        .flash{background:#e6f4ec;color:#1e7a4c;border-left:4px solid #1e7a4c;padding:8px 12px}
+        .notice{background:#eaeefc;border-left:4px solid #2f4aa8;padding:8px 12px}
+        .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+        .card{background:#fff;border:1px solid #dfe2ee;border-radius:8px;padding:14px}
+        .out{color:#b3261e;font-weight:600}
+        table{width:100%;border-collapse:collapse;background:#fff;margin:10px 0}
+        th{background:#1b2559;color:#fff;text-align:left}
+        th,td{padding:8px 10px;border-bottom:1px solid #dfe2ee}
+        .num{text-align:right}.grand td{font-weight:700}
+        input,select{font:inherit;padding:6px 8px;border:1px solid #c4c9de;border-radius:6px}
+        button,.btn{font:inherit;padding:7px 14px;border:1px solid #2f4aa8;background:#fff;color:#2f4aa8;
+            border-radius:6px;cursor:pointer;text-decoration:none}
+        .primary{background:#2f4aa8;color:#fff}
+        form.stack{display:flex;flex-direction:column;gap:12px;background:#fff;padding:18px;border-radius:8px;max-width:520px}
+        .error{text-align:center;background:#fff;padding:28px;border-radius:8px}
+        .error .code{font-size:52px;font-weight:800;color:#b3261e;margin:0}
+    </style>
+</head>
+<body>
+<header th:fragment="nav(active)">
+    <div class="wrap">
+        <a class="brand" th:href="@{/products}">NileMart</a>
+        <nav>
+            <a th:href="@{/products}" th:classappend="${active == 'products'} ? 'active'">Products</a>
+            <a th:href="@{/carts}" th:classappend="${active == 'carts'} ? 'active'">Carts</a>
+            <a th:href="@{/orders}" th:classappend="${active == 'orders'} ? 'active'">Orders</a>
+        </nav>
+    </div>
+</header>
+<div class="wrap" th:fragment="flash">
+    <p class="flash" th:if="${message != null}" th:text="${message}">Cart 1 created for Mona Adel.</p>
+</div>
+</body>
+</html>

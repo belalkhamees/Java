@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<!-- view checkout/form | GET /carts/{number}/checkout  (and ?governorate=GIZA for the preview)
+     model: cart CartView, governorates Governorate[], selected Governorate or null, quote, Quote or null
+     posts: POST /carts/{number}/checkout (governorate = enum constant name) -->
+<head th:replace="~{fragments/layout :: head('Checkout')}"></head>
+<body>
+<header th:replace="~{fragments/layout :: nav('carts')}"></header>
+<main class="wrap">
+    <div th:replace="~{fragments/layout :: flash}"></div>
+    <h1>Checkout - cart <span th:text="'#' + ${cart.number()}">#1</span></h1>
+    <table>
+        <tr><th>Product</th><th class="num">Qty</th><th class="num">Line price (EGP)</th></tr>
+        <tr th:each="line : ${cart.lines()}">
+            <td th:text="${line.name()}">Fast Charger 20W</td>
+            <td class="num" th:text="${line.quantity()}">2</td>
+            <td class="num" th:text="${#numbers.formatDecimal(line.linePrice(), 1, 'COMMA', 2, 'POINT')}">1,300.00</td>
+        </tr>
+    </table>
+    <h2>Ship to</h2>
+    <form method="get" th:action="@{/carts/{n}/checkout(n=${cart.number()})}">
+        <select name="governorate">
+            <option value="">Choose a governorate</option>
+            <option th:each="g : ${governorates}" th:value="${g.name()}"
+                    th:selected="${selected != null and selected == g}" th:text="${g.label}">Cairo</option>
+        </select>
+        <button type="submit">Show total</button>
+    </form>
+    <section th:if="${quote != null}">
+        <table>
+            <tr><td>Subtotal</td><td class="num"
+                                     th:text="${#numbers.formatDecimal(quote.subtotal(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+            <tr><td>VAT</td><td class="num"
+                                th:text="${#numbers.formatDecimal(quote.vat(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+            <tr><td>Shipping to <span th:text="${selected.label}">Giza</span></td>
+                <td class="num" th:if="${quote.shippingFee().signum() == 0}">Free</td>
+                <td class="num" th:unless="${quote.shippingFee().signum() == 0}"
+                    th:text="${#numbers.formatDecimal(quote.shippingFee(), 1, 'COMMA', 2, 'POINT')}">50.00</td></tr>
+            <tr class="grand"><td>Total (EGP)</td><td class="num"
+                                                      th:text="${#numbers.formatDecimal(quote.total(), 1, 'COMMA', 2, 'POINT')}">0.00</td></tr>
+        </table>
+        <form method="post" th:action="@{/carts/{n}/checkout(n=${cart.number()})}">
+            <input type="hidden" name="governorate" th:value="${selected.name()}">
+            <button class="primary" type="submit">Place order</button>
+        </form>
+    </section>
+    <p><a th:href="@{/carts/{n}(n=${cart.number()})}">Back to cart</a></p>
+</main>
+</body>
+</html>
